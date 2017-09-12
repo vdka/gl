@@ -1569,8 +1569,7 @@ findVersion :: fn() -> (major: i32, minor: i32) {
         "OpenGL ES \x00".raw,
     }
 
-    for i := 0; i < 3; i += 1 {
-        prefix := prefixes[i]
+    for prefix in prefixes {
         length := strlen(prefix)
         if strncmp(version, prefix, length) == 0 {
             version += length
