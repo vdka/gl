@@ -2,7 +2,7 @@
 #use "glconstants.kai" _
 
 // Swapping argument orders:
-//     (\*)*(i8|u8|i16|u16|i32|u32|i64|u64|f32|f64|rawptr|i32|ui32) ([\w_]+)
+//     (\*)*(i8|u8|i16|u16|i32|u32|i64|u64|f32|f64|rawptr|i32|uint) ([\w_]+)
 //     $3: $1$2
 
 
@@ -13,18 +13,18 @@ Type conversion overview:
     typedef unsigned i32 GLbitfield; -> u32
     typedef signed char GLbyte;      -> i8
     typedef short GLshort;           -> i16
-    typedef i32 GLi32;               -> i32
+    typedef i32 GLint;               -> i32
     typedef unsigned char GLubyte;   -> u8
     typedef unsigned short GLushort; -> u16
-    typedef unsigned i32 GLui32;     -> u32
+    typedef unsigned i32 GLuint;     -> u32
     typedef i32 GLsizei;             -> i32
     typedef float GLfloat;           -> f32
     typedef double GLdouble;         -> f64
     typedef char GLchar;             -> u8
-    typedef ptrdiff_t GLi32ptr;      -> i32
+    typedef ptrdiff_t GLintptr;      -> i32
     typedef ptrdiff_t GLsizeiptr;    -> i32
-    typedef i3264_t GLi3264;         -> i64
-    typedef ui3264_t GLui3264;       -> u64
+    typedef i3264_t GLint64;         -> i64
+    typedef uint64_t GLuint64;       -> u64
 
     void*                            -> rawptr
 */
@@ -36,7 +36,7 @@ debug_proc_t :: (source: u32, type: u32, id: u32, severity: u32, length: i32, me
 // VERSION_1_0
 CullFace:               (mode: u32) -> void
 FrontFace:              (mode: u32) -> void
-Hi32:                   (target: u32, mode: u32) -> void
+Hint:                   (target: u32, mode: u32) -> void
 LineWidth:              (width: f32) -> void
 PointSize:              (size: f32) -> void
 PolygonMode:            (face: u32, mode: u32) -> void
@@ -45,8 +45,8 @@ TexParameterf:          (target: u32, pname: u32, param: f32) -> void
 TexParameterfv:         (target: u32, pname: u32, params: *f32) -> void
 TexParameteri:          (target: u32, pname: u32, param: i32) -> void
 TexParameteriv:         (target: u32, pname: u32, params: *i32) -> void
-TexImage1D:             (target: u32, level: i32, i32ernalformat: i32, width: i32, border: i32, format: u32, type_: u32, pixels: rawptr) -> void
-TexImage2D:             (target: u32, level: i32, i32ernalformat: i32, width: i32, height: i32, border: i32, format: u32, type_: u32, pixels: rawptr) -> void
+TexImage1D:             (target: u32, level: i32, internalformat: i32, width: i32, border: i32, format: u32, type_: u32, pixels: rawptr) -> void
+TexImage2D:             (target: u32, level: i32, internalformat: i32, width: i32, height: i32, border: i32, format: u32, type_: u32, pixels: rawptr) -> void
 DrawBuffer:             (buf: u32) -> void
 Clear:                  (mask: u32) -> void
 ClearColor:             (red: f32, green: f32, blue: f32, alpha: f32) -> void
@@ -72,7 +72,7 @@ GetBooleanv:            (pname: u32, data: *u8) -> void
 GetDoublev:             (pname: u32, data: *f64) -> void
 GetError:               () -> u32
 GetFloatv:              (pname: u32, data: *f32) -> void
-Geti32egerv:            (pname: u32, data: *i32) -> void
+GetIntegerv:            (pname: u32, data: *i32) -> void
 GetString:              (name: u32) -> *u8
 GetTexImage:            (target: u32,  level: i32, format: u32, type_: u32, pixels: rawptr) -> void
 GetTexParameterfv:      (target: u32, pname: u32, params: *f32) -> void
@@ -86,7 +86,7 @@ Viewport:               (x: i32, y: i32, width: i32, height: i32) -> void
 load1_0 :: fn(getProcAddress: (*u8) -> rawptr) -> void {
     CullFace               = autocast getProcAddress("glCullFace\x00".raw)
     FrontFace              = autocast getProcAddress("glFrontFace\x00".raw)
-    Hi32                   = autocast getProcAddress("glHi32\x00".raw)
+    Hint                   = autocast getProcAddress("glHint\x00".raw)
     LineWidth              = autocast getProcAddress("glLineWidth\x00".raw)
     PointSize              = autocast getProcAddress("glPointSize\x00".raw)
     PolygonMode            = autocast getProcAddress("glPolygonMode\x00".raw)
@@ -122,7 +122,7 @@ load1_0 :: fn(getProcAddress: (*u8) -> rawptr) -> void {
     GetDoublev             = autocast getProcAddress("glGetDoublev\x00".raw)
     GetError               = autocast getProcAddress("glGetError\x00".raw)
     GetFloatv              = autocast getProcAddress("glGetFloatv\x00".raw)
-    Geti32egerv            = autocast getProcAddress("glGeti32egerv\x00".raw)
+    GetIntegerv            = autocast getProcAddress("glGetIntegerv\x00".raw)
     GetString              = autocast getProcAddress("glGetString\x00".raw)
     GetTexImage            = autocast getProcAddress("glGetTexImage\x00".raw)
     GetTexParameterfv      = autocast getProcAddress("glGetTexParameterfv\x00".raw)
@@ -139,8 +139,8 @@ load1_0 :: fn(getProcAddress: (*u8) -> rawptr) -> void {
 DrawArrays:        (mode: u32, first: i32, count: i32) -> void
 DrawElements:      (mode: u32, count: i32, type_: u32, indices: rawptr) -> void
 PolygonOffset:     (factor: f32, units: f32) -> void
-CopyTexImage1D:    (target: u32, level: i32, i32ernalformat: u32, x: i32, y: i32, width: i32, border: i32) -> void
-CopyTexImage2D:    (target: u32, level: i32, i32ernalformat: u32, x: i32, y: i32, width: i32, height: i32, border: i32) -> void
+CopyTexImage1D:    (target: u32, level: i32, internalformat: u32, x: i32, y: i32, width: i32, border: i32) -> void
+CopyTexImage2D:    (target: u32, level: i32, internalformat: u32, x: i32, y: i32, width: i32, height: i32, border: i32) -> void
 CopyTexSubImage1D: (target: u32, level: i32, xoffset: i32, x: i32, y: i32, width: i32) -> void
 CopyTexSubImage2D: (target: u32, level: i32, xoffset: i32, yoffset: i32, x: i32, y: i32, width: i32, height: i32) -> void
 TexSubImage1D:     (target: u32, level: i32, xoffset: i32, width: i32, format: u32, type_: u32, pixels: rawptr) -> void
@@ -169,7 +169,7 @@ load1_1 :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
 
 // VERSION_1_2
 DrawRangeElements: (mode: u32, start: u32, end: u32, count: i32, type_: u32, indices: rawptr) -> void
-TexImage3D:        (target: u32, level: i32, i32ernalformat: i32, width: i32, height: i32, depth: i32, border: i32, format: u32, type_: u32, pixels: rawptr) -> void
+TexImage3D:        (target: u32, level: i32, internalformat: i32, width: i32, height: i32, depth: i32, border: i32, format: u32, type_: u32, pixels: rawptr) -> void
 TexSubImage3D:     (target: u32, level: i32, xoffset: i32, yoffset: i32, zoffset: i32, width: i32, height: i32, depth: i32, format: u32, type_: u32, pixels: rawptr) -> void
 CopyTexSubImage3D: (target: u32, level: i32, xoffset: i32, yoffset: i32, zoffset: i32, x: i32, y: i32, width: i32, height: i32) -> void
 
@@ -184,9 +184,9 @@ load1_2 :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
 // VERSION_1_3
 ActiveTexture:           (texture: u32) -> void
 SampleCoverage:          (value: f32, invert: u8) -> void
-CompressedTexImage3D:    (target: u32, level: i32, i32ernalformat: u32, width: i32, height: i32, depth: i32, border: i32, imageSize: i32, data: rawptr) -> void
-CompressedTexImage2D:    (target: u32, level: i32, i32ernalformat: u32, width: i32, height: i32, border: i32, imageSize: i32, data: rawptr) -> void
-CompressedTexImage1D:    (target: u32, level: i32, i32ernalformat: u32, width: i32, border: i32, imageSize: i32, data: rawptr) -> void
+CompressedTexImage3D:    (target: u32, level: i32, internalformat: u32, width: i32, height: i32, depth: i32, border: i32, imageSize: i32, data: rawptr) -> void
+CompressedTexImage2D:    (target: u32, level: i32, internalformat: u32, width: i32, height: i32, border: i32, imageSize: i32, data: rawptr) -> void
+CompressedTexImage1D:    (target: u32, level: i32, internalformat: u32, width: i32, border: i32, imageSize: i32, data: rawptr) -> void
 CompressedTexSubImage3D: (target: u32, level: i32, xoffset: i32, yoffset: i32, zoffset: i32, width: i32, height: i32, depth: i32, format: u32, imageSize: i32, data: rawptr) -> void
 CompressedTexSubImage2D: (target: u32, level: i32, xoffset: i32, yoffset: i32, width: i32, height: i32, format: u32, imageSize: i32, data: rawptr) -> void
 CompressedTexSubImage1D: (target: u32, level: i32, xoffset: i32, width: i32, format: u32, imageSize: i32, data: rawptr) -> void
@@ -305,7 +305,7 @@ GetUniformiv:             (program: u32, location: i32, params: *i32) -> void
 GetVertexAttribdv:        (index: u32, pname: u32, params: *f64) -> void
 GetVertexAttribfv:        (index: u32, pname: u32, params: *f32) -> void
 GetVertexAttribiv:        (index: u32, pname: u32, params: *i32) -> void
-GetVertexAttribPointerv:  (index: u32, pname: u32, poi32er: *rawptr) -> void
+GetVertexAttribPointerv:  (index: u32, pname: u32, pointer: *rawptr) -> void
 IsProgram:                (program: u32) -> u8
 IsShader:                 (shader: u32) -> u8
 LinkProgram:              (program: u32) -> void
@@ -367,7 +367,7 @@ VertexAttrib4sv:          (index: u32, v: *i16) -> void
 VertexAttrib4ubv:         (index: u32, v: *u8) -> void
 VertexAttrib4uiv:         (index: u32, v: *u32) -> void
 VertexAttrib4usv:         (index: u32, v: *u16) -> void
-VertexAttribPointer:      (index: u32, size: i32, type_: u32, normalized: u8, stride: i32, poi32er: rawptr) -> void
+VertexAttribPointer:      (index: u32, size: i32, type_: u32, normalized: u8, stride: i32, pointer: rawptr) -> void
 
 load2_0 :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
     BlendEquationSeparate    = autocast getProcAddress("glBlendEquationSeparate\x00".raw)
@@ -487,11 +487,11 @@ load2_1 :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
 // VERSION_3_0
 ColorMaski:                          (index: u32, r: u8, g: u8, b: u8, a: u8) -> void
 GetBooleani_v:                       (target: u32, index: u32, data: *u8) -> void
-Geti32egeri_v:                       (target: u32, index: u32, data: *i32) -> void
+GetIntegeri_v:                       (target: u32, index: u32, data: *i32) -> void
 Enablei:                             (target: u32, index: u32) -> void
 Disablei:                            (target: u32, index: u32) -> void
 IsEnabledi:                          (target: u32, index: u32) -> u8
-Begi32ransformFeedback:              (primitiveMode: u32) -> void
+BeginTransformFeedback:              (primitiveMode: u32) -> void
 EndTransformFeedback:                () -> void
 BindBufferRange:                     (target: u32, index: u32, buffer: u32, offset: i32, size: i32) -> void
 BindBufferBase:                      (target: u32, index: u32, buffer: u32) -> void
@@ -500,7 +500,7 @@ GetTransformFeedbackVarying:         (program: u32, index: u32, bufSize: i32, le
 ClampColor:                          (target: u32, clamp: u32) -> void
 BeginConditionalRender:              (id: u32, mode: u32) -> void
 EndConditionalRender:                () -> void
-VertexAttribIPointer:                (index: u32, size: i32, type_: u32, stride: i32, poi32er: rawptr) -> void
+VertexAttribIPointer:                (index: u32, size: i32, type_: u32, stride: i32, pointer: rawptr) -> void
 GetVertexAttribIiv:                  (index: u32, pname: u32, params: *i32) -> void
 GetVertexAttribIuiv:                 (index: u32, pname: u32, params: *u32) -> void
 VertexAttribI1i:                     (index: u32, x: i32) -> void
@@ -547,7 +547,7 @@ IsRenderbuffer:                      (renderbuffer: u32) -> u8
 BindRenderbuffer:                    (target: u32, renderbuffer: u32) -> void
 DeleteRenderbuffers:                 (n: i32, renderbuffers: *u32) -> void
 GenRenderbuffers:                    (n: i32, renderbuffers: *u32) -> void
-RenderbufferStorage:                 (target: u32, i32ernalformat: u32, width: i32, height: i32) -> void
+RenderbufferStorage:                 (target: u32, internalformat: u32, width: i32, height: i32) -> void
 GetRenderbufferParameteriv:          (target: u32, pname: u32, params: *i32) -> void
 IsFramebuffer:                       (framebuffer: u32) -> u8
 BindFramebuffer:                     (target: u32, framebuffer: u32) -> void
@@ -561,7 +561,7 @@ FramebufferRenderbuffer:             (target: u32, attachment: u32, renderbuffer
 GetFramebufferAttachmentParameteriv: (target: u32, attachment: u32, pname: u32, params: *i32) -> void
 GenerateMipmap:                      (target: u32) -> void
 BlitFramebuffer:                     (srcX0: i32, srcY0: i32, srcX1: i32, srcY1: i32, dstX0: i32, dstY0: i32, dstX1: i32, dstY1: i32, mask: u32, filter: u32) -> void
-RenderbufferStorageMultisample:      (target: u32, samples: i32, i32ernalformat: u32, width: i32, height: i32) -> void
+RenderbufferStorageMultisample:      (target: u32, samples: i32, internalformat: u32, width: i32, height: i32) -> void
 FramebufferTextureLayer:             (target: u32, attachment: u32, texture: u32, level: i32, layer: i32) -> void
 MapBufferRange:                      (target: u32, offset: i32, length: i32, access: u32) -> rawptr
 FlushMappedBufferRange:              (target: u32, offset: i32, length: i32) -> void
@@ -573,11 +573,11 @@ IsVertexArray:                       (array: u32) -> u8
 load3_0 :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
     ColorMaski                          = autocast getProcAddress("glColorMaski\x00".raw)
     GetBooleani_v                       = autocast getProcAddress("glGetBooleani_v\x00".raw)
-    Geti32egeri_v                       = autocast getProcAddress("glGeti32egeri_v\x00".raw)
+    GetIntegeri_v                       = autocast getProcAddress("glGetIntegeri_v\x00".raw)
     Enablei                             = autocast getProcAddress("glEnablei\x00".raw)
     Disablei                            = autocast getProcAddress("glDisablei\x00".raw)
     IsEnabledi                          = autocast getProcAddress("glIsEnabledi\x00".raw)
-    Begi32ransformFeedback              = autocast getProcAddress("glBegi32ransformFeedback\x00".raw)
+    BeginTransformFeedback              = autocast getProcAddress("glBeginTransformFeedback\x00".raw)
     EndTransformFeedback                = autocast getProcAddress("glEndTransformFeedback\x00".raw)
     BindBufferRange                     = autocast getProcAddress("glBindBufferRange\x00".raw)
     BindBufferBase                      = autocast getProcAddress("glBindBufferBase\x00".raw)
@@ -661,7 +661,7 @@ load3_0 :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
 // VERSION_3_1
 DrawArraysInstanced:       (mode: u32, first: i32, count: i32, instancecount: i32) -> void
 DrawElementsInstanced:     (mode: u32, count: i32, type_: u32, indices: rawptr, instancecount: i32) -> void
-TexBuffer:                 (target: u32, i32ernalformat: u32, buffer: u32) -> void
+TexBuffer:                 (target: u32, internalformat: u32, buffer: u32) -> void
 PrimitiveRestartIndex:     (index: u32) -> void
 CopyBufferSubData:         (readTarget: u32, writeTarget: u32, readOffset: i32, writeOffset: i32, size: i32) -> void
 GetUniformIndices:         (program: u32, uniformCount: i32, uniformNames: *u8, uniformIndices: *u32) -> void
@@ -699,13 +699,13 @@ IsSync:                          (sync: sync_t) -> u8
 DeleteSync:                      (sync: sync_t) -> void
 ClientWaitSync:                  (sync: sync_t, flags: u32, timeout: u64) -> u32
 WaitSync:                        (sync: sync_t, flags: u32, timeout: u64) -> void
-Geti32eger64v:                   (pname: u32, data: *i64) -> void
+GetInteger64v:                   (pname: u32, data: *i64) -> void
 GetSynciv:                       (sync: sync_t, pname: u32, bufSize: i32, length: *i32, values: *i32) -> void
-Geti32eger64i_v:                 (target: u32, index: u32, data: *i64) -> void
+GetInteger64i_v:                 (target: u32, index: u32, data: *i64) -> void
 GetBufferParameteri64v:          (target: u32, pname: u32, params: *i64) -> void
 FramebufferTexture:              (target: u32, attachment: u32, texture: u32, level: i32) -> void
-TexImage2DMultisample:           (target: u32, samples: i32, i32ernalformat: u32, width: i32, height: i32, fixedsamplelocations: u8) -> void
-TexImage3DMultisample:           (target: u32, samples: i32, i32ernalformat: u32, width: i32, height: i32, depth: i32, fixedsamplelocations: u8) -> void
+TexImage2DMultisample:           (target: u32, samples: i32, internalformat: u32, width: i32, height: i32, fixedsamplelocations: u8) -> void
+TexImage3DMultisample:           (target: u32, samples: i32, internalformat: u32, width: i32, height: i32, depth: i32, fixedsamplelocations: u8) -> void
 GetMultisamplefv:                (pname: u32, index: u32, val: *f32) -> void
 SampleMaski:                     (maskNumber: u32, mask: u32) -> void
 
@@ -720,9 +720,9 @@ load3_2 :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
     DeleteSync                      = autocast getProcAddress("glDeleteSync\x00".raw)
     ClientWaitSync                  = autocast getProcAddress("glClientWaitSync\x00".raw)
     WaitSync                        = autocast getProcAddress("glWaitSync\x00".raw)
-    Geti32eger64v                   = autocast getProcAddress("glGeti32eger64v\x00".raw)
+    GetInteger64v                   = autocast getProcAddress("glGetInteger64v\x00".raw)
     GetSynciv                       = autocast getProcAddress("glGetSynciv\x00".raw)
-    Geti32eger64i_v                 = autocast getProcAddress("glGeti32eger64i_v\x00".raw)
+    GetInteger64i_v                 = autocast getProcAddress("glGetInteger64i_v\x00".raw)
     GetBufferParameteri64v          = autocast getProcAddress("glGetBufferParameteri64v\x00".raw)
     FramebufferTexture              = autocast getProcAddress("glFramebufferTexture\x00".raw)
     TexImage2DMultisample           = autocast getProcAddress("glTexImage2DMultisample\x00".raw)
@@ -1029,7 +1029,7 @@ VertexAttribL1dv:          (index: u32, v: *f64) -> void
 VertexAttribL2dv:          (index: u32, v: *f64) -> void
 VertexAttribL3dv:          (index: u32, v: *f64) -> void
 VertexAttribL4dv:          (index: u32, v: *f64) -> void
-VertexAttribLPointer:      (index: u32, size: i32, type_: u32, stride: i32, poi32er: rawptr) -> void
+VertexAttribLPointer:      (index: u32, size: i32, type_: u32, stride: i32, pointer: rawptr) -> void
 GetVertexAttribLdv:        (index: u32, pname: u32, params: *f64) -> void
 ViewportArrayv:            (first: u32, count: i32, v: *f32) -> void
 ViewportIndexedf:          (index: u32, x: f32, y: f32, w: f32, h: f32) -> void
@@ -1138,13 +1138,13 @@ load4_1 :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
 DrawArraysInstancedBaseInstance:             (mode: u32, first: i32, count: i32, instancecount: i32, baseinstance: u32) -> void
 DrawElementsInstancedBaseInstance:           (mode: u32, count: i32, type_: u32, indices: rawptr, instancecount: i32, baseinstance: u32) -> void
 DrawElementsInstancedBaseVertexBaseInstance: (mode: u32, count: i32, type_: u32, indices: rawptr, instancecount: i32, basevertex: i32, baseinstance: u32) -> void
-Geti32ernalformativ:                         (target: u32, i32ernalformat: u32, pname: u32, bufSize: i32, params: *i32) -> void
+GetInternalformativ:                         (target: u32, Internalformat: u32, pname: u32, bufSize: i32, params: *i32) -> void
 GetActiveAtomicCounterBufferiv:              (program: u32, bufferIndex: u32, pname: u32, params: *i32) -> void
 BindImageTexture:                            (unit: u32, texture: u32, level: i32, layered: u8, layer: i32, access: u32, format: u32) -> void
 MemoryBarrier:                               (barriers: u32) -> void
-TexStorage1D:                                (target: u32, levels: i32, i32ernalformat: u32, width: i32) -> void
-TexStorage2D:                                (target: u32, levels: i32, i32ernalformat: u32, width: i32, height: i32) -> void
-TexStorage3D:                                (target: u32, levels: i32, i32ernalformat: u32, width: i32, height: i32, depth: i32) -> void
+TexStorage1D:                                (target: u32, levels: i32, internalformat: u32, width: i32) -> void
+TexStorage2D:                                (target: u32, levels: i32, internalformat: u32, width: i32, height: i32) -> void
+TexStorage3D:                                (target: u32, levels: i32, internalformat: u32, width: i32, height: i32, depth: i32) -> void
 DrawTransformFeedbackInstanced:              (mode: u32, id: u32, instancecount: i32) -> void
 DrawTransformFeedbackStreamInstanced:        (mode: u32, id: u32, stream: u32, instancecount: i32) -> void
 
@@ -1152,7 +1152,7 @@ load4_2 :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
     DrawArraysInstancedBaseInstance             = autocast getProcAddress("glDrawArraysInstancedBaseInstance\x00".raw)
     DrawElementsInstancedBaseInstance           = autocast getProcAddress("glDrawElementsInstancedBaseInstance\x00".raw)
     DrawElementsInstancedBaseVertexBaseInstance = autocast getProcAddress("glDrawElementsInstancedBaseVertexBaseInstance\x00".raw)
-    Geti32ernalformativ                         = autocast getProcAddress("glGeti32ernalformativ\x00".raw)
+    GetInternalformativ                         = autocast getProcAddress("glGetInternalformativ\x00".raw)
     GetActiveAtomicCounterBufferiv              = autocast getProcAddress("glGetActiveAtomicCounterBufferiv\x00".raw)
     BindImageTexture                            = autocast getProcAddress("glBindImageTexture\x00".raw)
     MemoryBarrier                               = autocast getProcAddress("glMemoryBarrier\x00".raw)
@@ -1164,14 +1164,14 @@ load4_2 :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
 }
 
 // VERSION_4_3
-ClearBufferData:                 (target: u32, i32ernalformat: u32, format: u32, type_: u32, data: rawptr) -> void
-ClearBufferSubData:              (target: u32, i32ernalformat: u32, offset: i32, size: i32, format: u32, type_: u32, data: rawptr) -> void
+ClearBufferData:                 (target: u32, internalformat: u32, format: u32, type_: u32, data: rawptr) -> void
+ClearBufferSubData:              (target: u32, internalformat: u32, offset: i32, size: i32, format: u32, type_: u32, data: rawptr) -> void
 DispatchCompute:                 (num_groups_x: u32, num_groups_y: u32, num_groups_z: u32) -> void
 DispatchComputeIndirect:         (indirect: i32) -> void
 CopyImageSubData:                (srcName: u32, srcTarget: u32, srcLevel: i32, srcX: i32, srcY: i32, srcZ: i32, dstName: u32, dstTarget: u32, dstLevel: i32, dstX: i32, dstY: i32, dstZ: i32, srcWidth: i32, srcHeight: i32, srcDepth: i32) -> void
 FramebufferParameteri:           (target: u32, pname: u32, param: i32) -> void
 GetFramebufferParameteriv:       (target: u32, pname: u32, params: *i32) -> void
-Geti32ernalformati64v:           (target: u32, i32ernalformat: u32, pname: u32, bufSize: i32, params: *i64) -> void
+GetInternalformati64v:           (target: u32, internalformat: u32, pname: u32, bufSize: i32, params: *i64) -> void
 InvalidateTexSubImage:           (texture: u32, level: i32, xoffset: i32, yoffset: i32, zoffset: i32, width: i32, height: i32, depth: i32) -> void
 InvalidateTexImage:              (texture: u32, level: i32) -> void
 InvalidateBufferSubData:         (buffer: u32, offset: i32, length: i32) -> void
@@ -1180,17 +1180,17 @@ InvalidateFramebuffer:           (target: u32, numAttachments: i32, attachments:
 InvalidateSubFramebuffer:        (target: u32, numAttachments: i32, attachments: *u32, x: i32, y: i32, width: i32, height: i32) -> void
 MultiDrawArraysIndirect:         (mode: u32, indirect: rawptr, drawcount: i32, stride: i32) -> void
 MultiDrawElementsIndirect:       (mode: u32, type_: u32, indirect: rawptr, drawcount: i32, stride: i32) -> void
-GetProgrami32erfaceiv:           (program: u32, programi32erface: u32, pname: u32, params: *i32) -> void
-GetProgramResourceIndex:         (program: u32, programi32erface: u32, name: *u8) -> u32
-GetProgramResourceName:          (program: u32, programi32erface: u32, index: u32, bufSize: i32, length: *i32, name: *u8) -> void
-GetProgramResourceiv:            (program: u32, programi32erface: u32, index: u32, propCount: i32, props: *u32, bufSize: i32, length: *i32, params: *i32) -> void
-GetProgramResourceLocation:      (program: u32, programi32erface: u32, name: *u8) -> i32
-GetProgramResourceLocationIndex: (program: u32, programi32erface: u32, name: *u8) -> i32
+GetProgramInterfaceiv:           (program: u32, programinterface: u32, pname: u32, params: *i32) -> void
+GetProgramResourceIndex:         (program: u32, programinterface: u32, name: *u8) -> u32
+GetProgramResourceName:          (program: u32, programinterface: u32, index: u32, bufSize: i32, length: *i32, name: *u8) -> void
+GetProgramResourceiv:            (program: u32, programinterface: u32, index: u32, propCount: i32, props: *u32, bufSize: i32, length: *i32, params: *i32) -> void
+GetProgramResourceLocation:      (program: u32, programinterface: u32, name: *u8) -> i32
+GetProgramResourceLocationIndex: (program: u32, programinterface: u32, name: *u8) -> i32
 ShaderStorageBlockBinding:       (program: u32, storageBlockIndex: u32, storageBlockBinding: u32) -> void
-TexBufferRange:                  (target: u32, i32ernalformat: u32, buffer: u32, offset: i32, size: i32) -> void
-TexStorage2DMultisample:         (target: u32, samples: i32, i32ernalformat: u32, width: i32, height: i32, fixedsamplelocations: u8) -> void
-TexStorage3DMultisample:         (target: u32, samples: i32, i32ernalformat: u32, width: i32, height: i32, depth: i32, fixedsamplelocations: u8) -> void
-TextureView:                     (texture: u32, target: u32, origtexture: u32, i32ernalformat: u32, minlevel: u32, numlevels: u32, minlayer: u32, numlayers: u32) -> void
+TexBufferRange:                  (target: u32, internalformat: u32, buffer: u32, offset: i32, size: i32) -> void
+TexStorage2DMultisample:         (target: u32, samples: i32, internalformat: u32, width: i32, height: i32, fixedsamplelocations: u8) -> void
+TexStorage3DMultisample:         (target: u32, samples: i32, internalformat: u32, width: i32, height: i32, depth: i32, fixedsamplelocations: u8) -> void
+TextureView:                     (texture: u32, target: u32, origtexture: u32, internalformat: u32, minlevel: u32, numlevels: u32, minlayer: u32, numlayers: u32) -> void
 BindVertexBuffer:                (bindingindex: u32, buffer: u32, offset: i32, stride: i32) -> void
 VertexAttribFormat:              (attribindex: u32, size: i32, type_: u32, normalized: u8, relativeoffset: u32) -> void
 VertexAttribIFormat:             (attribindex: u32, size: i32, type_: u32, relativeoffset: u32) -> void
@@ -1216,7 +1216,7 @@ load4_3 :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
     CopyImageSubData                = autocast getProcAddress("glCopyImageSubData\x00".raw)
     FramebufferParameteri           = autocast getProcAddress("glFramebufferParameteri\x00".raw)
     GetFramebufferParameteriv       = autocast getProcAddress("glGetFramebufferParameteriv\x00".raw)
-    Geti32ernalformati64v           = autocast getProcAddress("glGeti32ernalformati64v\x00".raw)
+    GetInternalformati64v           = autocast getProcAddress("glGetInternalformati64v\x00".raw)
     InvalidateTexSubImage           = autocast getProcAddress("glInvalidateTexSubImage\x00".raw)
     InvalidateTexImage              = autocast getProcAddress("glInvalidateTexImage\x00".raw)
     InvalidateBufferSubData         = autocast getProcAddress("glInvalidateBufferSubData\x00".raw)
@@ -1225,7 +1225,7 @@ load4_3 :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
     InvalidateSubFramebuffer        = autocast getProcAddress("glInvalidateSubFramebuffer\x00".raw)
     MultiDrawArraysIndirect         = autocast getProcAddress("glMultiDrawArraysIndirect\x00".raw)
     MultiDrawElementsIndirect       = autocast getProcAddress("glMultiDrawElementsIndirect\x00".raw)
-    GetProgrami32erfaceiv           = autocast getProcAddress("glGetProgrami32erfaceiv\x00".raw)
+    GetProgramInterfaceiv           = autocast getProcAddress("glGetProgramInterfaceiv\x00".raw)
     GetProgramResourceIndex         = autocast getProcAddress("glGetProgramResourceIndex\x00".raw)
     GetProgramResourceName          = autocast getProcAddress("glGetProgramResourceName\x00".raw)
     GetProgramResourceiv            = autocast getProcAddress("glGetProgramResourceiv\x00".raw)
@@ -1290,8 +1290,8 @@ NamedBufferStorage:                       (buffer: u32, size: i32, data: rawptr,
 NamedBufferData:                          (buffer: u32, size: i32, data: rawptr, usage: u32) -> void
 NamedBufferSubData:                       (buffer: u32, offset: i32, size: i32, data: rawptr) -> void
 CopyNamedBufferSubData:                   (readBuffer: u32, writeBuffer: u32, readOffset: i32, writeOffset: i32, size: i32) -> void
-ClearNamedBufferData:                     (buffer: u32, i32ernalformat: u32, format: u32, type_: u32, data: rawptr) -> void
-ClearNamedBufferSubData:                  (buffer: u32, i32ernalformat: u32, offset: i32, size: i32, format: u32, type_: u32, data: rawptr) -> void
+ClearNamedBufferData:                     (buffer: u32, internalformat: u32, format: u32, type_: u32, data: rawptr) -> void
+ClearNamedBufferSubData:                  (buffer: u32, internalformat: u32, offset: i32, size: i32, format: u32, type_: u32, data: rawptr) -> void
 MapNamedBuffer:                           (buffer: u32, access: u32) -> rawptr
 MapNamedBufferRange:                      (buffer: u32, offset: i32, length: i32, access: u32) -> rawptr
 UnmapNamedBuffer:                         (buffer: u32) -> u8
@@ -1319,17 +1319,17 @@ CheckNamedFramebufferStatus:              (framebuffer: u32, target: u32) -> u32
 GetNamedFramebufferParameteriv:           (framebuffer: u32, pname: u32, param: *i32) -> void
 GetNamedFramebufferAttachmentParameteriv: (framebuffer: u32, attachment: u32, pname: u32, params: *i32) -> void
 CreateRenderbuffers:                      (n: i32, renderbuffers: *u32) -> void
-NamedRenderbufferStorage:                 (renderbuffer: u32, i32ernalformat: u32, width: i32, height: i32) -> void
-NamedRenderbufferStorageMultisample:      (renderbuffer: u32, samples: i32, i32ernalformat: u32, width: i32, height: i32) -> void
+NamedRenderbufferStorage:                 (renderbuffer: u32, internalformat: u32, width: i32, height: i32) -> void
+NamedRenderbufferStorageMultisample:      (renderbuffer: u32, samples: i32, internalformat: u32, width: i32, height: i32) -> void
 GetNamedRenderbufferParameteriv:          (renderbuffer: u32, pname: u32, params: *i32) -> void
 CreateTextures:                           (target: u32, n: i32, textures: *u32) -> void
-TextureBuffer:                            (texture: u32, i32ernalformat: u32, buffer: u32) -> void
-TextureBufferRange:                       (texture: u32, i32ernalformat: u32, buffer: u32, offset: i32, size: i32) -> void
-TextureStorage1D:                         (texture: u32, levels: i32, i32ernalformat: u32, width: i32) -> void
-TextureStorage2D:                         (texture: u32, levels: i32, i32ernalformat: u32, width: i32, height: i32) -> void
-TextureStorage3D:                         (texture: u32, levels: i32, i32ernalformat: u32, width: i32, height: i32, depth: i32) -> void
-TextureStorage2DMultisample:              (texture: u32, samples: i32, i32ernalformat: u32, width: i32, height: i32, fixedsamplelocations: u8) -> void
-TextureStorage3DMultisample:              (texture: u32, samples: i32, i32ernalformat: u32, width: i32, height: i32, depth: i32, fixedsamplelocations: u8) -> void
+TextureBuffer:                            (texture: u32, internalformat: u32, buffer: u32) -> void
+TextureBufferRange:                       (texture: u32, internalformat: u32, buffer: u32, offset: i32, size: i32) -> void
+TextureStorage1D:                         (texture: u32, levels: i32, internalformat: u32, width: i32) -> void
+TextureStorage2D:                         (texture: u32, levels: i32, internalformat: u32, width: i32, height: i32) -> void
+TextureStorage3D:                         (texture: u32, levels: i32, internalformat: u32, width: i32, height: i32, depth: i32) -> void
+TextureStorage2DMultisample:              (texture: u32, samples: i32, internalformat: u32, width: i32, height: i32, fixedsamplelocations: u8) -> void
+TextureStorage3DMultisample:              (texture: u32, samples: i32, internalformat: u32, width: i32, height: i32, depth: i32, fixedsamplelocations: u8) -> void
 TextureSubImage1D:                        (texture: u32, level: i32, xoffset: i32, width: i32, format: u32, type_: u32, pixels: rawptr) -> void
 TextureSubImage2D:                        (texture: u32, level: i32, xoffset: i32, yoffset: i32, width: i32, height: i32, format: u32, type_: u32, pixels: rawptr) -> void
 TextureSubImage3D:                        (texture: u32, level: i32, xoffset: i32, yoffset: i32, zoffset: i32, width: i32, height: i32, depth: i32, format: u32, type_: u32, pixels: rawptr) -> void
@@ -1591,4 +1591,3 @@ init :: fn(getProcAddress: (name: *u8) -> rawptr) -> void {
 
     loadUpTo(major, minor, getProcAddress)
 }
-
